@@ -1,0 +1,19 @@
+{
+  "value": { "rateToUse": 0.01 },
+  "audit": {
+    "if": {
+      "condition": {
+        "or": [
+          {
+            "greaterThan": {
+              "lhs": { "productInitialRatePeriodMonths": 48 },
+              "rhs": { "60": 60 }
+            }
+          },
+          { "isAdditionalBorrowing": true }
+        ]
+      },
+      "trueValue": { "productInitialRate": 0.01 }
+    }
+  }
+}
