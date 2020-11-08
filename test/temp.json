@@ -1,5 +1,5 @@
 {
-  "value": { "rateToUse": 0.01 },
+  "value": { "residentialInterestRateToUse": 0.01 },
   "audit": {
     "if": {
       "condition": {
@@ -7,7 +7,7 @@
           {
             "greaterThan": {
               "lhs": { "productInitialRatePeriodMonths": 48 },
-              "rhs": { "60": 60 }
+              "rhs": { "constant": 60 }
             }
           },
           { "isAdditionalBorrowing": true }

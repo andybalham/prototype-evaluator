@@ -1,5 +1,5 @@
 import { getResidentialInterestRateToUse } from '../src/businessFunctions';
-import { AuditedValue, VALUE } from '../src/AuditedValue';
+import { VALUE } from '../src/AuditedValue';
 
 
 describe('Test class', () => {
@@ -20,38 +20,38 @@ describe('Test class', () => {
 
     it('getTotalMonthlyOutgoings', () => {
         
-        const inputs = {
-            applicants: [
-                {
-                    monthlyOutgoings: [
-                        {
-                            outgoingType: 'UnsecuredLoan',
-                            amount: 100,
-                        },
-                        {
-                            outgoingType: 'Other',
-                            amount: 200,
-                        },
-                    ]
-                },
-                {
-                    monthlyOutgoings: [
-                        {
-                            outgoingType: 'Maintenance',
-                            amount: 100,
-                        },
-                        {
-                            outgoingType: 'Other',
-                            amount: 200,
-                        },
-                    ]
-                },
-            ],
-        };
+        // const inputs = {
+        //     applicants: [
+        //         {
+        //             monthlyOutgoings: [
+        //                 {
+        //                     outgoingType: 'UnsecuredLoan',
+        //                     amount: 100,
+        //                 },
+        //                 {
+        //                     outgoingType: 'Other',
+        //                     amount: 200,
+        //                 },
+        //             ]
+        //         },
+        //         {
+        //             monthlyOutgoings: [
+        //                 {
+        //                     outgoingType: 'Maintenance',
+        //                     amount: 100,
+        //                 },
+        //                 {
+        //                     outgoingType: 'Other',
+        //                     amount: 200,
+        //                 },
+        //             ]
+        //         },
+        //     ],
+        // };
 
-        const monthlyOutgoings = VALUE({ monthlyOutgoings: inputs.applicants[0].monthlyOutgoings });
+        // const monthlyOutgoings = VALUE({ monthlyOutgoings: inputs.applicants[0].monthlyOutgoings });
         
-        SUM_ARRAY(monthlyOutgoings, (monthlyOutgoing: AuditedValue) => { return { amount: monthlyOutgoing.wrappedValue.amount};});
+        // SUM_ARRAY(monthlyOutgoings, (monthlyOutgoing: AuditedValue) => { return { amount: monthlyOutgoing.wrappedValue.amount};});
 
         // const result = getTotalMonthlyOutgoings(VALUE({applicants: inputs.applicants}));
 
