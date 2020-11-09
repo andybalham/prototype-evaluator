@@ -1,5 +1,5 @@
 
-export class NamedValue {
+export class NamedValueGeneric {
 
     get name(): string { return Object.keys(this)[0]; }
     get value(): any { return this[this.name]; }
@@ -28,4 +28,20 @@ export class NamedValue {
         const value = valueObject[name];
         this[name] = value;
     }
+}
+
+export class NamedValue<T> extends NamedValueGeneric {
+
+    get name(): string { return Object.keys(this)[0]; }
+    get value(): T { return this[this.name]; }
+
+    constructor(valueObject: any) {
+        super(valueObject);
+    }
+}
+
+export function NAMED_VALUE<T>(name: string, value: T): NamedValue<T> {
+    const valueObject = {};
+    valueObject[name] = value;
+    return new NamedValue<T>(valueObject);
 }

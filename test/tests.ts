@@ -1,60 +1,47 @@
-import { getResidentialInterestRateToUse } from '../src/businessFunctions';
-import { VALUE } from '../src/AuditedValue';
+import { getApplicantTotalAnnualGrossIncome, getResidentialInterestRateToUse } from '../src/businessFunctions';
+import { AUDITED_VALUE } from '../src/AuditedValue';
+import { Applicant } from '../src/Application';
+import { ClientConfig } from '../src/ClientConfig';
+import { NAMED_VALUE } from '../src/NamedValue';
 
 
 describe('Test class', () => {
 
-    it.only('getResidentialInterestRateToUse', () => {
+    it('getResidentialInterestRateToUse', () => {
 
         const result = 
             getResidentialInterestRateToUse(
-                VALUE({isAdditionalBorrowing: true}),
-                VALUE({productInitialRatePeriodMonths: 48}),
-                VALUE({productInitialRate: 0.01}),
-                VALUE({productReversionRate: 0.03}),
-                VALUE({productStressRate: 0.01}),
+                AUDITED_VALUE({isAdditionalBorrowing: true}),
+                AUDITED_VALUE({productInitialRatePeriodMonths: 48}),
+                AUDITED_VALUE({productInitialRate: 0.01}),
+                AUDITED_VALUE({productReversionRate: 0.03}),
+                AUDITED_VALUE({productStressRate: 0.01}),
             );
 
         console.log(`result: ${JSON.stringify(result)}`);
     });
 
-    it('getTotalMonthlyOutgoings', () => {
-        
-        // const inputs = {
-        //     applicants: [
-        //         {
-        //             monthlyOutgoings: [
-        //                 {
-        //                     outgoingType: 'UnsecuredLoan',
-        //                     amount: 100,
-        //                 },
-        //                 {
-        //                     outgoingType: 'Other',
-        //                     amount: 200,
-        //                 },
-        //             ]
-        //         },
-        //         {
-        //             monthlyOutgoings: [
-        //                 {
-        //                     outgoingType: 'Maintenance',
-        //                     amount: 100,
-        //                 },
-        //                 {
-        //                     outgoingType: 'Other',
-        //                     amount: 200,
-        //                 },
-        //             ]
-        //         },
-        //     ],
-        // };
+    it.only('getTotalMonthlyOutgoings', () => {
 
-        // const monthlyOutgoings = VALUE({ monthlyOutgoings: inputs.applicants[0].monthlyOutgoings });
-        
-        // SUM_ARRAY(monthlyOutgoings, (monthlyOutgoing: AuditedValue) => { return { amount: monthlyOutgoing.wrappedValue.amount};});
+        const applicant: Applicant = {
+            primaryEmployed: {
+                basicSalary: 30000,
+                overtime: 10000
+            }
+        };
 
-        // const result = getTotalMonthlyOutgoings(VALUE({applicants: inputs.applicants}));
+        const clientConfig: ClientConfig = {
+            basicSalaryUsed: 1.00,
+            overtimeUsed: 0.50,
+            bonusUsed: 0.50,
+            regularOBCUsed: 0.50,
+            commissionUsed: 0.50,
+            allowanceUsed: 0.50,
+            annualCarAllowanceUsed: 0.50,
+        };
 
-        // console.log(`result: ${JSON.stringify(result)}`);
+        const result = getApplicantTotalAnnualGrossIncome(NAMED_VALUE('applicant_01', applicant), clientConfig);
+
+        console.log(`result: ${JSON.stringify(result)}`);
     });
 });

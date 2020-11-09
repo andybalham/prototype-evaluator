@@ -1,19 +1,19 @@
 {
-  "value": { "residentialInterestRateToUse": 0.01 },
+  "value": { "total": 35000 },
   "audit": {
-    "if": {
-      "condition": {
-        "or": [
-          {
-            "greaterThan": {
-              "lhs": { "productInitialRatePeriodMonths": 48 },
-              "rhs": { "constant": 60 }
-            }
-          },
-          { "isAdditionalBorrowing": true }
+    "sum": [
+      {
+        "multiply": [
+          { "applicant_01.primaryEmployed.basicSalary": 30000 },
+          { "clientConfig.basicSalaryUsed": 1 }
         ]
       },
-      "trueValue": { "productInitialRate": 0.01 }
-    }
+      {
+        "multiply": [
+          { "applicant_01.primaryEmployed.overtime": 10000 },
+          { "clientConfig.overtimeUsed": 0.5 }
+        ]
+      }
+    ]
   }
 }

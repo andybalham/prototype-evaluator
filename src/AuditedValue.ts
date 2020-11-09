@@ -1,10 +1,10 @@
-import { NamedValue } from './NamedValue';
+import { NamedValueGeneric } from './NamedValue';
 
 export class AuditedValue {
 
     readonly audit: any;
 
-    constructor(public readonly value: NamedValue, audit?: any) {
+    constructor(public readonly value: NamedValueGeneric, audit?: any) {
         this.audit = audit ?? value;
     }
 
@@ -13,31 +13,37 @@ export class AuditedValue {
     }
 
     AS(newValue: any): AuditedValue {
-        const newNamedValue = new NamedValue(newValue);
-        newNamedValue[newNamedValue.name] = this.wrappedValue;
-        return new AuditedValue(newNamedValue, this.audit);
+        const newNamedValueGeneric = new NamedValueGeneric(newValue);
+        newNamedValueGeneric[newNamedValueGeneric.name] = this.wrappedValue;
+        return new AuditedValue(newNamedValueGeneric, this.audit);
     }
 
     GREATER_THAN(rhs: AuditedValue): AuditedValue {
         const result = this.wrappedValue > rhs.wrappedValue;
-        return VALUE({result}, {greaterThan: {lhs: this.audit, rhs: rhs.audit}});
+        return AUDITED_VALUE({result}, {greaterThan: {lhs: this.audit, rhs: rhs.audit}});
     }
 
     OR(...rhsValues: AuditedValue[]): AuditedValue {
         const values = new Array<AuditedValue>(this).concat(rhsValues);
         const result = values.map(v => v.wrappedValue).reduce((result, v) => result || v, true);
-        return VALUE({result}, {or: values.map(v => v.audit)});
+        return AUDITED_VALUE({result}, {or: values.map(v => v.audit)});
     }
 }
 
-export function VALUE(value: any, audit?: any): AuditedValue {
-    return new AuditedValue(new NamedValue(value), audit);
+export function AUDITED_VALUE(value: any, audit?: any): AuditedValue {
+    return new AuditedValue(new NamedValueGeneric(value), audit);
 }
 
 export function SUM(...values: AuditedValue[]): AuditedValue {
     const total = values.map(v => v.wrappedValue).reduce((total, v) => total + v, 0);
-    return VALUE({total}, { sum: values.map(v => v.audit)});
+    return AUDITED_VALUE({total}, { sum: values.map(v => v.audit)});
 }
+
+export function MULTIPLY(...values: AuditedValue[]): AuditedValue {
+    const product = values.map(v => v.wrappedValue).reduce((total, v) => total * v, 1);
+    return AUDITED_VALUE({product}, { multiply: values.map(v => v.audit)});
+}
+
 
 export function IF(condition: AuditedValue): Then {
     return new Then(condition);
@@ -59,7 +65,7 @@ export class Else {
     ELSE(falseValue: AuditedValue): AuditedValue {
 
         if (this.condition.wrappedValue) {
-            return VALUE(
+            return AUDITED_VALUE(
                 {trueValue: this.trueValue.wrappedValue}, 
                 {
                     'if': {
@@ -69,7 +75,7 @@ export class Else {
                 });
         }
 
-        return VALUE(
+        return AUDITED_VALUE(
             {falseValue: falseValue.wrappedValue}, 
             {
                 'if': {
