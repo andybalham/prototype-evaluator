@@ -1,21 +1,20 @@
 import { ClientConfig } from './ClientConfig';
 import { Applicant, PrimaryEmployed } from './Application';
-import { IF, SUM, AUDITED_VALUE, AuditedValue, MULTIPLY } from './AuditedValue';
-import { NamedValue, NamedValueGeneric, NAMED_VALUE } from './NamedValue';
+import { IF, SUM, AuditedValueAny, MULTIPLY, VALUE_ANY, AuditedValue, VALUE } from './AuditedValue';
 
 export function getResidentialInterestRateToUse(
-    isAdditionalBorrowing: AuditedValue,
-    initialRatePeriodMonths: AuditedValue, 
-    initialRate: AuditedValue,
-    reversionRate: AuditedValue,
-    stressRate: AuditedValue,
-): AuditedValue {
+    isAdditionalBorrowing: AuditedValueAny,
+    initialRatePeriodMonths: AuditedValueAny, 
+    initialRate: AuditedValueAny,
+    reversionRate: AuditedValueAny,
+    stressRate: AuditedValueAny,
+): AuditedValueAny {
 
     const isInitialRateApplicable = 
-        initialRatePeriodMonths.GREATER_THAN(AUDITED_VALUE(60))
+        initialRatePeriodMonths.GREATER_THAN(VALUE_ANY(60))
             .OR(isAdditionalBorrowing);
 
-    const result = 
+    const residentialInterestRateToUse = 
         IF(isInitialRateApplicable)
             .THEN(
                 initialRate
@@ -23,38 +22,33 @@ export function getResidentialInterestRateToUse(
                 SUM(reversionRate, stressRate)
             );
 
-    return result.AS({residentialInterestRateToUse: result});
+    return residentialInterestRateToUse.AS({residentialInterestRateToUse});
 }
 
-export function getApplicantTotalAnnualGrossIncome(applicant: NamedValue<Applicant>, clientConfig: ClientConfig): AuditedValue {
+export function getApplicantTotalAnnualGrossIncome(applicant: AuditedValue<Applicant>, clientConfig: ClientConfig): AuditedValueAny {
 
     const totalPrimaryEmployedValue = 
         getTotalPrimaryEmployedValue(
-            NAMED_VALUE_PROPERTY(applicant, 'primaryEmployed'), new NamedValue({clientConfig}));
+            applicant.property('primaryEmployed'), VALUE('clientConfig', clientConfig));
 
     return totalPrimaryEmployedValue;
 }
 
-function getTotalPrimaryEmployedValue(primaryEmployed: NamedValue<PrimaryEmployed>, clientConfig: NamedValue<ClientConfig>): AuditedValue {
+function getTotalPrimaryEmployedValue(primaryEmployed: AuditedValue<PrimaryEmployed>, clientConfig: AuditedValue<ClientConfig>): AuditedValueAny {
 
-    const primaryEmployedValuesUsed: AuditedValue[] = [];
+    const primaryEmployedValuesUsed: AuditedValueAny[] = [];
     
-    const basicSalary = NAMED_VALUE_PROPERTY(primaryEmployed, 'basicSalary');
-    const basicSalaryUsed = NAMED_VALUE_PROPERTY(clientConfig, 'basicSalaryUsed');
-    primaryEmployedValuesUsed.push(MULTIPLY(AUDITED_VALUE(basicSalary), AUDITED_VALUE(basicSalaryUsed)));
+    const basicSalaryUsed = 
+        MULTIPLY(primaryEmployed.property('basicSalary'), clientConfig.property('basicSalaryUsed'));    
+    primaryEmployedValuesUsed.push(basicSalaryUsed);
     
     if (primaryEmployed.value.overtime) {
-        const overtime = NAMED_VALUE_PROPERTY(primaryEmployed, 'overtime');
-        const overtimeUsed = NAMED_VALUE_PROPERTY(clientConfig, 'overtimeUsed');
-        primaryEmployedValuesUsed.push(MULTIPLY(AUDITED_VALUE(overtime), AUDITED_VALUE(overtimeUsed)));
+        const overtimeUsed = 
+            MULTIPLY(primaryEmployed.property('overtime'), clientConfig.property('overtimeUsed'));
+        primaryEmployedValuesUsed.push(overtimeUsed);
     }
 
     const totalPrimaryEmployedValue = SUM(...primaryEmployedValuesUsed);
 
-    return totalPrimaryEmployedValue;
-}
-
-function NAMED_VALUE_PROPERTY<T>(parent: NamedValue<T>, name: keyof T): NamedValueGeneric {
-    const propertyValue = NAMED_VALUE(`${parent.name}.${name}`, parent.value[name]);
-    return propertyValue;
+    return totalPrimaryEmployedValue.AS({totalPrimaryEmployedValue});
 }

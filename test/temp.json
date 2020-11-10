@@ -1,19 +1,40 @@
-{
-  "value": { "total": 35000 },
-  "audit": {
-    "sum": [
-      {
-        "multiply": [
-          { "applicant_01.primaryEmployed.basicSalary": 30000 },
-          { "clientConfig.basicSalaryUsed": 1 }
-        ]
-      },
-      {
-        "multiply": [
-          { "applicant_01.primaryEmployed.overtime": 10000 },
-          { "clientConfig.overtimeUsed": 0.5 }
-        ]
+[
+  {
+    "namedValue": { "residentialInterestRateToUse": 0.1 },
+    "audit": {
+      "if": {
+        "condition": {
+          "or": [
+            {
+              "greaterThan": {
+                "lhs": { "productInitialRatePeriodMonths": 48 },
+                "rhs": { "constant": 60 }
+              }
+            },
+            { "isAdditionalBorrowing": true }
+          ]
+        },
+        "trueValue": { "productInitialRate": 0.1 }
       }
-    ]
+    }
+  },
+  {
+    "namedValue": { "totalPrimaryEmployedValue": 35000 },
+    "audit": {
+      "sum": [
+        {
+          "multiply": [
+            { "applicant_01.primaryEmployed.basicSalary": 30000 },
+            { "clientConfig.basicSalaryUsed": 1 }
+          ]
+        },
+        {
+          "multiply": [
+            { "applicant_01.primaryEmployed.overtime": 10000 },
+            { "clientConfig.overtimeUsed": 0.5 }
+          ]
+        }
+      ]
+    }
   }
-}
+]

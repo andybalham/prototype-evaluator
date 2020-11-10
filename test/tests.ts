@@ -1,8 +1,7 @@
 import { getApplicantTotalAnnualGrossIncome, getResidentialInterestRateToUse } from '../src/businessFunctions';
-import { AUDITED_VALUE } from '../src/AuditedValue';
+import { VALUE } from '../src/AuditedValue';
 import { Applicant } from '../src/Application';
 import { ClientConfig } from '../src/ClientConfig';
-import { NAMED_VALUE } from '../src/NamedValue';
 
 
 describe('Test class', () => {
@@ -11,20 +10,24 @@ describe('Test class', () => {
 
         const result = 
             getResidentialInterestRateToUse(
-                AUDITED_VALUE({isAdditionalBorrowing: true}),
-                AUDITED_VALUE({productInitialRatePeriodMonths: 48}),
-                AUDITED_VALUE({productInitialRate: 0.01}),
-                AUDITED_VALUE({productReversionRate: 0.03}),
-                AUDITED_VALUE({productStressRate: 0.01}),
+                VALUE('isAdditionalBorrowing', true),
+                VALUE('productInitialRatePeriodMonths', 48),
+                VALUE('productInitialRate', 0.1),
+                VALUE('productReversionRate', 0.3),
+                VALUE('productStressRate', 0.1),
             );
 
         console.log(`result: ${JSON.stringify(result)}`);
     });
 
-    it.only('getTotalMonthlyOutgoings', () => {
+    it('getTotalMonthlyOutgoings', () => {
 
         const applicant: Applicant = {
             primaryEmployed: {
+                basicSalary: 30000,
+                overtime: 10000
+            },
+            secondaryEmployed: {
                 basicSalary: 30000,
                 overtime: 10000
             }
@@ -40,7 +43,9 @@ describe('Test class', () => {
             annualCarAllowanceUsed: 0.50,
         };
 
-        const result = getApplicantTotalAnnualGrossIncome(NAMED_VALUE('applicant_01', applicant), clientConfig);
+        const result = 
+            getApplicantTotalAnnualGrossIncome(
+                VALUE('applicant_01', applicant), clientConfig);
 
         console.log(`result: ${JSON.stringify(result)}`);
     });
