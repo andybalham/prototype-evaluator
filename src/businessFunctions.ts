@@ -1,6 +1,6 @@
 import { ClientConfig } from './ClientConfig';
-import { Applicant, PrimaryEmployed } from './Application';
-import { IF, SUM, AuditedValueAny, MULTIPLY, VALUE_ANY, AuditedValue, VALUE } from './AuditedValue';
+import { Applicant, Application, PrimaryEmployed, SecondaryEmployed } from './Application';
+import { IF, SUM, AuditedValueAny, MULTIPLY, VALUE_ANY, AuditedValue, MAP } from './AuditedValue';
 
 export function getResidentialInterestRateToUse(
     isAdditionalBorrowing: AuditedValueAny,
@@ -25,30 +25,74 @@ export function getResidentialInterestRateToUse(
     return residentialInterestRateToUse.AS({residentialInterestRateToUse});
 }
 
-export function getApplicantTotalAnnualGrossIncome(applicant: AuditedValue<Applicant>, clientConfig: ClientConfig): AuditedValueAny {
+export function getTotalAnnualGrossIncome(
+    application: AuditedValue<Application>,
+    clientConfig: AuditedValue<ClientConfig>,
+): AuditedValueAny {
+    
+    const applicantTotals =
+        MAP(application, 'applicants', (applicant: AuditedValue<Applicant>) =>
+            getApplicantTotalAnnualGrossIncome(applicant, clientConfig));
 
+    const total = SUM(...applicantTotals);
+
+    return total.AS({totalAnnualGrossIncome: total});
+}
+
+export function getApplicantTotalAnnualGrossIncome(
+    applicant: AuditedValue<Applicant>, 
+    clientConfig: AuditedValue<ClientConfig>,
+): AuditedValueAny {
+
+    const values: AuditedValueAny[] = [];
+    
     const totalPrimaryEmployedValue = 
-        getTotalPrimaryEmployedValue(
-            applicant.property('primaryEmployed'), VALUE('clientConfig', clientConfig));
+        getTotalPrimaryEmployedValue(applicant.property('primaryEmployed'), clientConfig);
+    values.push(totalPrimaryEmployedValue);
 
-    return totalPrimaryEmployedValue;
+    const totalSecondaryEmployedValue = 
+        getTotalSecondaryEmployedValue(applicant.property('secondaryEmployed'), clientConfig);
+    values.push(totalSecondaryEmployedValue);
+
+    const total = SUM(...values);
+    
+    return total.AS({totalPrimaryEmployedValue});
 }
 
 function getTotalPrimaryEmployedValue(primaryEmployed: AuditedValue<PrimaryEmployed>, clientConfig: AuditedValue<ClientConfig>): AuditedValueAny {
 
-    const primaryEmployedValuesUsed: AuditedValueAny[] = [];
+    const values: AuditedValueAny[] = [];
     
     const basicSalaryUsed = 
         MULTIPLY(primaryEmployed.property('basicSalary'), clientConfig.property('basicSalaryUsed'));    
-    primaryEmployedValuesUsed.push(basicSalaryUsed);
+    values.push(basicSalaryUsed);
     
     if (primaryEmployed.value.overtime) {
         const overtimeUsed = 
             MULTIPLY(primaryEmployed.property('overtime'), clientConfig.property('overtimeUsed'));
-        primaryEmployedValuesUsed.push(overtimeUsed);
+        values.push(overtimeUsed);
     }
 
-    const totalPrimaryEmployedValue = SUM(...primaryEmployedValuesUsed);
+    const total = SUM(...values);
 
-    return totalPrimaryEmployedValue.AS({totalPrimaryEmployedValue});
+    return total.AS({totalPrimaryEmployedValue: total});
+}
+
+function getTotalSecondaryEmployedValue(secondaryEmployed: AuditedValue<SecondaryEmployed>, clientConfig: AuditedValue<ClientConfig>): AuditedValueAny {
+
+    const values: AuditedValueAny[] = [];
+    
+    const basicSalaryUsed = 
+        MULTIPLY(secondaryEmployed.property('basicSalary'), clientConfig.property('basicSalaryUsed'));    
+    values.push(basicSalaryUsed);
+    
+    if (secondaryEmployed.value.overtime) {
+        const overtimeUsed = 
+            MULTIPLY(secondaryEmployed.property('overtime'), clientConfig.property('overtimeUsed'));
+        values.push(overtimeUsed);
+    }
+
+    const total = SUM(...values);
+
+    return total.AS({totalSecondaryEmployedValue: total});
 }

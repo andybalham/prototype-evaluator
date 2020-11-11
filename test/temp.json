@@ -3,9 +3,12 @@
     "namedValue": { "residentialInterestRateToUse": 0.1 },
     "audit": {
       "if": {
+        "value": 0.1,
         "condition": {
+          "value": true,
           "or": [
             {
+              "value": false,
               "greaterThan": {
                 "lhs": { "productInitialRatePeriodMonths": 48 },
                 "rhs": { "constant": 60 }
@@ -19,19 +22,92 @@
     }
   },
   {
-    "namedValue": { "totalPrimaryEmployedValue": 35000 },
+    "namedValue": { "totalAnnualGrossIncome": 100000 },
     "audit": {
+      "value": 100000,
       "sum": [
         {
-          "multiply": [
-            { "applicant_01.primaryEmployed.basicSalary": 30000 },
-            { "clientConfig.basicSalaryUsed": 1 }
+          "value": 70000,
+          "sum": [
+            {
+              "value": 35000,
+              "sum": [
+                {
+                  "value": 30000,
+                  "multiply": [
+                    {
+                      "application.applicants[0].primaryEmployed.basicSalary": 30000
+                    },
+                    { "clientConfig.basicSalaryUsed": 1 }
+                  ]
+                },
+                {
+                  "value": 5000,
+                  "multiply": [
+                    {
+                      "application.applicants[0].primaryEmployed.overtime": 10000
+                    },
+                    { "clientConfig.overtimeUsed": 0.5 }
+                  ]
+                }
+              ]
+            },
+            {
+              "value": 35000,
+              "sum": [
+                {
+                  "value": 30000,
+                  "multiply": [
+                    {
+                      "application.applicants[0].secondaryEmployed.basicSalary": 30000
+                    },
+                    { "clientConfig.basicSalaryUsed": 1 }
+                  ]
+                },
+                {
+                  "value": 5000,
+                  "multiply": [
+                    {
+                      "application.applicants[0].secondaryEmployed.overtime": 10000
+                    },
+                    { "clientConfig.overtimeUsed": 0.5 }
+                  ]
+                }
+              ]
+            }
           ]
         },
         {
-          "multiply": [
-            { "applicant_01.primaryEmployed.overtime": 10000 },
-            { "clientConfig.overtimeUsed": 0.5 }
+          "value": 30000,
+          "sum": [
+            {
+              "value": 20000,
+              "sum": [
+                {
+                  "value": 20000,
+                  "multiply": [
+                    {
+                      "application.applicants[1].primaryEmployed.basicSalary": 20000
+                    },
+                    { "clientConfig.basicSalaryUsed": 1 }
+                  ]
+                }
+              ]
+            },
+            {
+              "value": 10000,
+              "sum": [
+                {
+                  "value": 10000,
+                  "multiply": [
+                    {
+                      "application.applicants[1].secondaryEmployed.basicSalary": 10000
+                    },
+                    { "clientConfig.basicSalaryUsed": 1 }
+                  ]
+                }
+              ]
+            }
           ]
         }
       ]

@@ -1,6 +1,6 @@
-import { getApplicantTotalAnnualGrossIncome, getResidentialInterestRateToUse } from '../src/businessFunctions';
+import { getResidentialInterestRateToUse, getTotalAnnualGrossIncome } from '../src/businessFunctions';
 import { VALUE } from '../src/AuditedValue';
-import { Applicant } from '../src/Application';
+import { Applicant, Application } from '../src/Application';
 import { ClientConfig } from '../src/ClientConfig';
 
 
@@ -22,7 +22,7 @@ describe('Test class', () => {
 
     it('getTotalMonthlyOutgoings', () => {
 
-        const applicant: Applicant = {
+        const applicant1: Applicant = {
             primaryEmployed: {
                 basicSalary: 30000,
                 overtime: 10000
@@ -31,6 +31,22 @@ describe('Test class', () => {
                 basicSalary: 30000,
                 overtime: 10000
             }
+        };
+
+        const applicant2: Applicant = {
+            primaryEmployed: {
+                basicSalary: 20000,
+            },
+            secondaryEmployed: {
+                basicSalary: 10000,
+            }
+        };
+
+        const application: Application = {
+            applicants: [
+                applicant1,
+                applicant2,
+            ]
         };
 
         const clientConfig: ClientConfig = {
@@ -44,8 +60,12 @@ describe('Test class', () => {
         };
 
         const result = 
-            getApplicantTotalAnnualGrossIncome(
-                VALUE('applicant_01', applicant), clientConfig);
+            getTotalAnnualGrossIncome(
+                VALUE('application', application), VALUE('clientConfig', clientConfig));
+
+        // const result = 
+        //     getApplicantTotalAnnualGrossIncome(
+        //         VALUE('applicant[1]', applicant), VALUE('clientConfig', clientConfig));
 
         console.log(`result: ${JSON.stringify(result)}`);
     });

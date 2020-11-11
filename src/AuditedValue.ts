@@ -18,13 +18,13 @@ export class AuditedValueAny {
 
     GREATER_THAN(rhs: AuditedValueAny): AuditedValueAny {
         const result = this.value > rhs.value;
-        return AUDITED_VALUE({result}, {greaterThan: {lhs: this.audit, rhs: rhs.audit}});
+        return AUDITED_VALUE({result}, {value: result, greaterThan: {lhs: this.audit, rhs: rhs.audit}});
     }
 
     OR(...rhsValues: AuditedValueAny[]): AuditedValueAny {
         const values = new Array<AuditedValueAny>(this).concat(rhsValues);
         const result = values.map(v => v.value).reduce((result, v) => result || v, true);
-        return AUDITED_VALUE({result}, {or: values.map(v => v.audit)});
+        return AUDITED_VALUE({result}, {value: result, or: values.map(v => v.audit)});
     }
 }
 
@@ -58,14 +58,36 @@ export function AUDITED_VALUE(value: any, audit: any): AuditedValueAny {
 
 export function SUM(...values: AuditedValueAny[]): AuditedValueAny {
     const total = values.map(v => v.value).reduce((total, v) => total + v, 0);
-    return AUDITED_VALUE({total}, { sum: values.map(v => v.audit)});
+    return AUDITED_VALUE({total}, { value: total, sum: values.map(v => v.audit)});
 }
 
 export function MULTIPLY(...values: AuditedValueAny[]): AuditedValueAny {
     const product = values.map(v => v.value).reduce((total, v) => total * v, 1);
-    return AUDITED_VALUE({product}, { multiply: values.map(v => v.audit)});
+    return AUDITED_VALUE({product}, { value: product,  multiply: values.map(v => v.audit)});
 }
 
+export function MAP<T1, T2>(
+    parent: AuditedValue<T1>, 
+    collectionPropertyName: keyof T1, 
+    mapper: (child: AuditedValue<T2>) => AuditedValueAny
+): AuditedValueAny[] {
+
+    const collection = parent.value[collectionPropertyName] as unknown as Array<T2>;
+
+    const mappedValues = new Array<AuditedValueAny>();
+
+    for (let index = 0; index < collection.length; index++) {
+
+        const childValue = 
+            VALUE(`${parent.name}.${collectionPropertyName}[${index}]`, collection[index]);
+
+        const mappedValue = mapper(childValue);
+
+        mappedValues.push(mappedValue);
+    }
+
+    return mappedValues;
+}
 
 export function IF(condition: AuditedValueAny): Then {
     return new Then(condition);
@@ -91,6 +113,7 @@ export class Else {
                 {trueValue: this.trueValue.value}, 
                 {
                     'if': {
+                        value: this.trueValue.value,
                         condition: this.condition.audit, 
                         trueValue: this.trueValue.audit,
                     }
@@ -101,6 +124,7 @@ export class Else {
             {falseValue: falseValue.value}, 
             {
                 'if': {
+                    value: falseValue.value,
                     condition: this.condition.audit, 
                     falseValue: falseValue.audit
                 }
