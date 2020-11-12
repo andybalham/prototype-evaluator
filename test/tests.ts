@@ -63,10 +63,6 @@ describe('Test class', () => {
             getTotalAnnualGrossIncome(
                 VALUE('application', application), VALUE('clientConfig', clientConfig));
 
-        // const result = 
-        //     getApplicantTotalAnnualGrossIncome(
-        //         VALUE('applicant[1]', applicant), VALUE('clientConfig', clientConfig));
-
         console.log(`result: ${JSON.stringify(result)}`);
     });
 });

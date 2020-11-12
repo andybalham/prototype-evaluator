@@ -3,12 +3,12 @@
     "namedValue": { "residentialInterestRateToUse": 0.1 },
     "audit": {
       "if": {
-        "value": 0.1,
+        "result": 0.1,
         "condition": {
-          "value": true,
+          "result": true,
           "or": [
             {
-              "value": false,
+              "result": false,
               "greaterThan": {
                 "lhs": { "productInitialRatePeriodMonths": 48 },
                 "rhs": { "constant": 60 }
@@ -24,17 +24,17 @@
   {
     "namedValue": { "totalAnnualGrossIncome": 100000 },
     "audit": {
-      "value": 100000,
+      "result": 100000,
       "sum": [
         {
-          "value": 70000,
+          "result": 70000,
           "sum": [
             {
-              "value": 35000,
+              "result": 35000,
               "sum": [
                 {
-                  "value": 30000,
-                  "multiply": [
+                  "result": 30000,
+                  "product": [
                     {
                       "application.applicants[0].primaryEmployed.basicSalary": 30000
                     },
@@ -42,8 +42,8 @@
                   ]
                 },
                 {
-                  "value": 5000,
-                  "multiply": [
+                  "result": 5000,
+                  "product": [
                     {
                       "application.applicants[0].primaryEmployed.overtime": 10000
                     },
@@ -53,11 +53,11 @@
               ]
             },
             {
-              "value": 35000,
+              "result": 35000,
               "sum": [
                 {
-                  "value": 30000,
-                  "multiply": [
+                  "result": 30000,
+                  "product": [
                     {
                       "application.applicants[0].secondaryEmployed.basicSalary": 30000
                     },
@@ -65,8 +65,8 @@
                   ]
                 },
                 {
-                  "value": 5000,
-                  "multiply": [
+                  "result": 5000,
+                  "product": [
                     {
                       "application.applicants[0].secondaryEmployed.overtime": 10000
                     },
@@ -78,14 +78,14 @@
           ]
         },
         {
-          "value": 30000,
+          "result": 30000,
           "sum": [
             {
-              "value": 20000,
+              "result": 20000,
               "sum": [
                 {
-                  "value": 20000,
-                  "multiply": [
+                  "result": 20000,
+                  "product": [
                     {
                       "application.applicants[1].primaryEmployed.basicSalary": 20000
                     },
@@ -95,11 +95,11 @@
               ]
             },
             {
-              "value": 10000,
+              "result": 10000,
               "sum": [
                 {
-                  "value": 10000,
-                  "multiply": [
+                  "result": 10000,
+                  "product": [
                     {
                       "application.applicants[1].secondaryEmployed.basicSalary": 10000
                     },
