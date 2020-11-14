@@ -10,8 +10,11 @@ export function getResidentialInterestRateToUse(
     stressRate: AuditedValue<number>,
 ): AuditedValue<number> {
 
+    const isInitialRateApplicable = 
+        getIsInitialRateApplicable(initialRatePeriodMonths, isAdditionalBorrowing);
+
     const residentialInterestRateToUse = 
-        IF(initialRatePeriodMonths.GREATER_THAN(VALUE_CONST(60)).OR(isAdditionalBorrowing))
+        IF(isInitialRateApplicable)
             .THEN(
                 initialRate
             ).ELSE(
@@ -19,6 +22,16 @@ export function getResidentialInterestRateToUse(
             );
 
     return residentialInterestRateToUse.AS({residentialInterestRateToUse});
+}
+
+function getIsInitialRateApplicable(
+    initialRatePeriodMonths: AuditedValue<number>, 
+    isAdditionalBorrowing: AuditedValue<boolean>
+): AuditedValue<boolean> {
+    
+    const isInitialRateApplicable = 
+        initialRatePeriodMonths.GREATER_THAN(VALUE_CONST(60)).OR(isAdditionalBorrowing);
+    return isInitialRateApplicable.AS({isInitialRateApplicable});
 }
 
 export function getTotalAnnualGrossIncome(
@@ -65,13 +78,13 @@ function getTotalPrimaryEmployedValue(
     const basicSalaryUsed = 
         primaryEmployed.property('basicSalary')
             .TIMES(clientConfig.property('basicSalaryUsed'));    
-    usedValues.push(basicSalaryUsed);
+    usedValues.push(basicSalaryUsed.AS({basicSalaryUsed}));
     
     if (primaryEmployed.value.overtime) {
         const overtimeUsed = 
             primaryEmployed.property('overtime')
                 .TIMES(clientConfig.property('overtimeUsed'));
-        usedValues.push(overtimeUsed);
+        usedValues.push(overtimeUsed.AS({overtimeUsed}));
     }
 
     const totalPrimaryEmployedValue = SUM(...usedValues);
@@ -89,13 +102,13 @@ function getTotalSecondaryEmployedValue(
     const basicSalaryUsed = 
         secondaryEmployed.property('basicSalary')
             .TIMES(clientConfig.property('basicSalaryUsed'));
-    usedValues.push(basicSalaryUsed);
+    usedValues.push(basicSalaryUsed.AS({basicSalaryUsed}));
     
     if (secondaryEmployed.value.overtime) {
         const overtimeUsed = 
             secondaryEmployed.property('overtime')
                 .TIMES(clientConfig.property('overtimeUsed'));
-        usedValues.push(overtimeUsed);
+        usedValues.push(overtimeUsed.AS({overtimeUsed}));
     }
 
     const totalSecondaryEmployedValue = SUM(...usedValues);

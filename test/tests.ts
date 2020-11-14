@@ -1,8 +1,9 @@
 import { getResidentialInterestRateToUse, getTotalAnnualGrossIncome } from '../src/businessFunctions';
-import { VALUE } from '../src/AuditedValue';
+import { AuditedValue, VALUE } from '../src/AuditedValue';
 import { Applicant, Application } from '../src/Application';
 import { ClientConfig } from '../src/ClientConfig';
-
+import fs from 'fs';
+import path from 'path';
 
 describe('Test class', () => {
 
@@ -17,7 +18,7 @@ describe('Test class', () => {
                 VALUE('productStressRate', 0.1),
             );
 
-        console.log(`result: ${JSON.stringify(result)}`);
+        createOutputFile('residentialInterestRateToUse.json', result);
     });
 
     it('getTotalMonthlyOutgoings', () => {
@@ -63,6 +64,19 @@ describe('Test class', () => {
             getTotalAnnualGrossIncome(
                 VALUE('application', application), VALUE('clientConfig', clientConfig));
 
-        console.log(`result: ${JSON.stringify(result)}`);
+        createOutputFile('totalMonthlyOutgoings.json', result);
     });
 });
+
+function createOutputFile(outputFileName: string, result: AuditedValue<any>): void {
+
+    const outputDir = path.join(__dirname, 'output');
+    
+    if (!fs.existsSync(outputDir)) fs.mkdirSync(outputDir);
+
+    const outputFilePath = path.join(outputDir, outputFileName);
+    const outputJson = JSON.stringify(result, null, 2);
+    
+    fs.writeFileSync(outputFilePath, outputJson);
+}
+

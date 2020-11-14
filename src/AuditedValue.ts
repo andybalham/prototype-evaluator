@@ -20,6 +20,7 @@ export class AuditedValue<T> {
     AS(newValue: any): AuditedValue<any> {
         const newNamedValue = new NamedValueAny(newValue);
         newNamedValue[newNamedValue.name] = this.value;
+        this.audit.result = newNamedValue;
         return new AuditedValue<any>(newNamedValue, this.audit);
     }
 

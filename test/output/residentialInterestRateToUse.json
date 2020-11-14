@@ -1,0 +1,37 @@
+{
+  "namedValue": {
+    "residentialInterestRateToUse": 0.1
+  },
+  "audit": {
+    "if": {
+      "result": 0.1,
+      "condition": {
+        "result": {
+          "isInitialRateApplicable": true
+        },
+        "or": [
+          {
+            "result": false,
+            "greaterThan": {
+              "lhs": {
+                "productInitialRatePeriodMonths": 48
+              },
+              "rhs": {
+                "constant": 60
+              }
+            }
+          },
+          {
+            "isAdditionalBorrowing": true
+          }
+        ]
+      },
+      "trueValue": {
+        "productInitialRate": 0.1
+      }
+    },
+    "result": {
+      "residentialInterestRateToUse": 0.1
+    }
+  }
+}

@@ -1,0 +1,132 @@
+{
+  "namedValue": {
+    "totalAnnualGrossIncome": 100000
+  },
+  "audit": {
+    "result": {
+      "totalAnnualGrossIncome": 100000
+    },
+    "sum": [
+      {
+        "result": {
+          "applicantTotalAnnualGrossIncome": 70000
+        },
+        "sum": [
+          {
+            "result": {
+              "totalPrimaryEmployedValue": 35000
+            },
+            "sum": [
+              {
+                "result": {
+                  "basicSalaryUsed": 30000
+                },
+                "product": [
+                  {
+                    "application.applicants[0].primaryEmployed.basicSalary": 30000
+                  },
+                  {
+                    "clientConfig.basicSalaryUsed": 1
+                  }
+                ]
+              },
+              {
+                "result": {
+                  "overtimeUsed": 5000
+                },
+                "product": [
+                  {
+                    "application.applicants[0].primaryEmployed.overtime": 10000
+                  },
+                  {
+                    "clientConfig.overtimeUsed": 0.5
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "result": {
+              "totalSecondaryEmployedValue": 35000
+            },
+            "sum": [
+              {
+                "result": {
+                  "basicSalaryUsed": 30000
+                },
+                "product": [
+                  {
+                    "application.applicants[0].secondaryEmployed.basicSalary": 30000
+                  },
+                  {
+                    "clientConfig.basicSalaryUsed": 1
+                  }
+                ]
+              },
+              {
+                "result": {
+                  "overtimeUsed": 5000
+                },
+                "product": [
+                  {
+                    "application.applicants[0].secondaryEmployed.overtime": 10000
+                  },
+                  {
+                    "clientConfig.overtimeUsed": 0.5
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "result": {
+          "applicantTotalAnnualGrossIncome": 30000
+        },
+        "sum": [
+          {
+            "result": {
+              "totalPrimaryEmployedValue": 20000
+            },
+            "sum": [
+              {
+                "result": {
+                  "basicSalaryUsed": 20000
+                },
+                "product": [
+                  {
+                    "application.applicants[1].primaryEmployed.basicSalary": 20000
+                  },
+                  {
+                    "clientConfig.basicSalaryUsed": 1
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "result": {
+              "totalSecondaryEmployedValue": 10000
+            },
+            "sum": [
+              {
+                "result": {
+                  "basicSalaryUsed": 10000
+                },
+                "product": [
+                  {
+                    "application.applicants[1].secondaryEmployed.basicSalary": 10000
+                  },
+                  {
+                    "clientConfig.basicSalaryUsed": 1
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
